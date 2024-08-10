@@ -42,8 +42,11 @@ final class InMemoryCache: Cache {
 //   to alter the completion status of a specific todo using its index.
 // * A function named `func deleteTodo(atIndex index: Int)` to remove a todo using its index.
 final class TodoManager {
+    var currentToDoList: [Todo] = []
     
-    func addToDo() {
+    func addToDo(toDo: String, isCompleted: Bool = false) {
+        var temp = Todo(id: UUID(), title: toDo, isCompleted: isCompleted)
+        currentToDoList.append(temp)
     }
     
     func listToDos() {
@@ -54,10 +57,17 @@ final class TodoManager {
     
     func deleteToDo() {
     }
-    
-    
 
 }
+
+//TEST AREA
+var test = TodoManager()
+test.addToDo(toDo: "First ToDo")
+test.addToDo(toDo: "Second ToDo")
+test.addToDo(toDo: "Third ToDo")
+print(test.currentToDoList)
+
+//END OF TEST AREA
 
 
 // * The `App` class should have a `func run()` method, this method should perpetually
