@@ -50,6 +50,10 @@ final class TodoManager {
     }
     
     func listToDos() {
+        print("Your To Do's")
+        for (index,item) in currentToDoList.enumerated() {
+            print(String(index + 1) +  ". \(item.description)")
+        }
     }
     
     func toggleToDo() {
@@ -65,7 +69,7 @@ var test = TodoManager()
 test.addToDo(toDo: "First ToDo")
 test.addToDo(toDo: "Second ToDo")
 test.addToDo(toDo: "Third ToDo")
-print(test.currentToDoList)
+print(test.listToDos())
 
 //END OF TEST AREA
 
