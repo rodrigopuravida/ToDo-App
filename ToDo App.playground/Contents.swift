@@ -52,14 +52,16 @@ final class TodoManager {
     func listToDos() {
         print("Your To Do's")
         for (index,item) in currentToDoList.enumerated() {
-            print(String(index + 1) +  ". \(item.description)")
+            print(String(index + 1) +  ". is Completed: \(item.isCompleted) Item: \(item.description)")
         }
     }
     
-    func toggleToDo() {
+    func toggleToDo(choiceToToggle : Int) {
+        currentToDoList[choiceToToggle-1].isCompleted.toggle()
     }
     
-    func deleteToDo() {
+    func deleteToDo(choiceToDelete : Int) {
+        currentToDoList.remove(at: choiceToDelete - 1)
     }
 
 }
@@ -69,6 +71,9 @@ var test = TodoManager()
 test.addToDo(toDo: "First ToDo")
 test.addToDo(toDo: "Second ToDo")
 test.addToDo(toDo: "Third ToDo")
+print(test.listToDos())
+test.toggleToDo(choiceToToggle: 1)
+test.deleteToDo(choiceToDelete: 2)
 print(test.listToDos())
 
 //END OF TEST AREA
