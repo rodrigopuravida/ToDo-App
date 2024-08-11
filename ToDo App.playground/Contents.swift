@@ -57,11 +57,23 @@ final class TodoManager {
     }
     
     func toggleToDo(choiceToToggle : Int) {
-        currentToDoList[choiceToToggle-1].isCompleted.toggle()
+        
+        //validate that chice exists
+        if currentToDoList.indices.contains(choiceToToggle-1) {
+            currentToDoList[choiceToToggle-1].isCompleted.toggle()
+        }
+        else {
+            print("Choice \(choiceToToggle) does not exist.  Please select a valid choice")
+        }
     }
     
     func deleteToDo(choiceToDelete : Int) {
-        currentToDoList.remove(at: choiceToDelete - 1)
+        if currentToDoList.indices.contains(choiceToDelete-1) {
+            currentToDoList.remove(at: choiceToDelete - 1)
+        }
+        else {
+            print("Choice \(choiceToDelete) does not exist.  Please select a valid choice")
+        }
     }
 
 }
@@ -75,6 +87,8 @@ print(test.listToDos())
 test.toggleToDo(choiceToToggle: 1)
 test.deleteToDo(choiceToDelete: 2)
 print(test.listToDos())
+test.toggleToDo(choiceToToggle: 8)
+test.deleteToDo(choiceToDelete: 0)
 
 //END OF TEST AREA
 
