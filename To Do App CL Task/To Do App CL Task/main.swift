@@ -52,7 +52,7 @@ final class TodoManager {
     var currentToDoList: [Todo] = []
     
     func addToDo(toDo: String, isCompleted: Bool = false) {
-        var temp = Todo(id: UUID(), title: toDo, isCompleted: isCompleted)
+        let temp = Todo(id: UUID(), title: toDo, isCompleted: isCompleted)
         currentToDoList.append(temp)
     }
     
@@ -93,6 +93,7 @@ final class TodoManager {
 //    such as `add`, `list`, `toggle`, `delete`, and `exit`.
 //  * The enum should be nested inside the definition of the `App` class
 final class App {
+    var toDoManager = TodoManager()
 
     public enum Command {
         case add
@@ -103,7 +104,7 @@ final class App {
     }
         
         func run() {
-            // Run perpetually
+            // Run perpetually until exit is chosen
             while true {
                 askQuestion()
                 
@@ -115,7 +116,7 @@ final class App {
     
     // Function to prompt for a question
     func askQuestion() {
-        print("Ask your question: ")
+        print("What would you like to do? (add, list, toggle, delete, exit): ")
         
         // Simulate user input (replace this with actual input logic)
         if let userInput = readLine() {
@@ -124,13 +125,9 @@ final class App {
     }
 
     // Function to handle the question
-    func handleQuestion(_ question: String) {
-        // Simple logic to respond to a question
-        if question.lowercased().contains("hello") {
-            print("Hello! How can I help you?")
-        } else {
-            print("I'm not sure how to answer that.")
-        }
+    func handleQuestion(_ choice: String) {
+        // Respond to the Enum Choice
+        
     }
         
 }
