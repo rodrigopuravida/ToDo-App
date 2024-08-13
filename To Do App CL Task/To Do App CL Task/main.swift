@@ -95,7 +95,7 @@ final class TodoManager {
 final class App {
     var toDoManager = TodoManager()
 
-    public enum Command {
+    enum Command : String {
         case add
         case list
         case toggle
@@ -104,7 +104,7 @@ final class App {
     }
         
         func run() {
-            // Run perpetually until exit is chosen
+            // Run for eternity until exit is chosen
             while true {
                 askQuestion()
                 
@@ -119,15 +119,22 @@ final class App {
         print("What would you like to do? (add, list, toggle, delete, exit): ")
         
         // Simulate user input (replace this with actual input logic)
-        if let userInput = readLine() {
-            handleQuestion(userInput)
+        if let userInput = readLine()?.lowercased(), let command = Command(rawValue: userInput) {
+            
+            switch command {
+            case .add:
+                print("add")
+            case .list:
+                print("list")
+            case .toggle:
+                print("toggle")
+            case .delete:
+                print("delete")
+            case .exit:
+                print("exit")
+            }
         }
-    }
 
-    // Function to handle the question
-    func handleQuestion(_ choice: String) {
-        // Respond to the Enum Choice
-        
     }
         
 }
