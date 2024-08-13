@@ -25,6 +25,12 @@ struct Todo : CustomStringConvertible, Codable {
 //  `func save(todos: [Todo])`: Persists the given todos.
 //  `func load() -> [Todo]?`: Retrieves and returns the saved todos, or nil if none exist.
 protocol Cache {
+    
+    func save(todos: [Todo])
+    
+    func load() -> [Todo]?
+    
+    
 
 }
 
@@ -32,6 +38,16 @@ protocol Cache {
 // to persist and retrieve the list of todos.
 // Utilize Swift's `FileManager` to handle file operations.
 final class JSONFileManagerCache: Cache {
+    func load() -> [Todo]? {
+        <#code#>
+    }
+    
+    
+    func save(todos: [Todo]) {
+        
+    }
+    
+    
 
 }
 
@@ -39,6 +55,14 @@ final class JSONFileManagerCache: Cache {
 // This won't retain todos across different app launches,
 // but serves as a quick in-session cache.
 final class InMemoryCache: Cache {
+    func save(todos: [Todo]) {
+        <#code#>
+    }
+    
+    func load() -> [Todo]? {
+        <#code#>
+    }
+    
 
 }
 
