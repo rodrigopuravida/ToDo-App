@@ -72,6 +72,7 @@ final class TodoManager {
         else {
             print("Choice \(choiceToToggle) does not exist.  Please select a valid choice")
         }
+        print("Item \(choiceToToggle) has switched status")
     }
     
     func deleteToDo(choiceToDelete : Int) {
@@ -81,6 +82,7 @@ final class TodoManager {
         else {
             print("Choice \(choiceToDelete) does not exist.  Please select a valid choice")
         }
+        print("Item \(choiceToDelete) has been deleted")
     }
 
 }
@@ -133,10 +135,16 @@ final class App {
                 toDoManager.listToDos()
                 
             case .toggle:
-                print("toggle")
+                print("Which item status do you want to switch")
+                if let task = readLine() {
+                    toDoManager.toggleToDo(choiceToToggle: Int(task)!)
+                }
                 
             case .delete:
-                print("delete")
+                print("Which item do you want to remove")
+                if let task = readLine() {
+                    toDoManager.deleteToDo(choiceToDelete: Int(task)!)
+                }
                 
             case .exit:
                 print("exit")
