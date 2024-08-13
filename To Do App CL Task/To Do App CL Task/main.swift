@@ -147,7 +147,7 @@ final class App {
                 }
                 
             case .exit:
-                print("exit")
+                exit(0)
             }
         }
 
