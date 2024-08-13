@@ -123,13 +123,21 @@ final class App {
             
             switch command {
             case .add:
-                print("add")
+                print("What would you like to add?")
+                if let task = readLine() {
+                    toDoManager.addToDo(toDo: task)
+                }
+                print("Task Added")
+                
             case .list:
-                print("list")
+                toDoManager.listToDos()
+                
             case .toggle:
                 print("toggle")
+                
             case .delete:
                 print("delete")
+                
             case .exit:
                 print("exit")
             }
