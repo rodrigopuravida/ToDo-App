@@ -37,19 +37,45 @@ protocol Cache {
 // `FileSystemCache`: This implementation should utilize the file system
 // to persist and retrieve the list of todos.
 // Utilize Swift's `FileManager` to handle file operations.
-final class JSONFileManagerCache: Cache {
+ class JSONFileManagerCache: Cache {
+    
+    // Get the file URL for saving/loading the ToDo array- courtesy of StackOverflow
+        static func getDocumentsDirectory() -> URL {
+            let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+            return paths[0]
+        }
+        
+        static func getFileURL() -> URL {
+            return getDocumentsDirectory().appendingPathComponent("todos.json")
+        }
+    
+    
     func load() -> [Todo]? {
-        <#code#>
+        let decoder = JSONDecoder()
+                do {
+                    let data = try Data(contentsOf: JSONFileManagerCache.getFileURL())
+                    let todos = try decoder.decode([Todo].self, from: data)
+                    print("Loaded successfully")
+                    return todos
+                } catch {
+                    print("Failed to load: \(error.localizedDescription)")
+                    return nil
+            }
     }
+  
     
     
     func save(todos: [Todo]) {
-        
+        let encoder = JSONEncoder()
+                do {
+                    let data = try encoder.encode(todos)
+                    try data.write(to: JSONFileManagerCache.getFileURL(), options: .atomic)
+                    print("Saved successfully")
+                } catch {
+                    print("Failed to save: \(error.localizedDescription)")
+                }
+            }
     }
-    
-    
-
-}
 
 // `InMemoryCache`: : Keeps todos in an array or similar structure during the session.
 // This won't retain todos across different app launches,
@@ -72,7 +98,7 @@ final class InMemoryCache: Cache {
 // * A function named `func toggleCompletion(forTodoAtIndex index: Int)`
 //   to alter the completion status of a specific todo using its index.
 // * A function named `func deleteTodo(atIndex index: Int)` to remove a todo using its index.
-final class TodoManager {
+ final class TodoManager : JSONFileManagerCache {
     var currentToDoList: [Todo] = []
     
     func addToDo(toDo: String, isCompleted: Bool = false) {
@@ -120,6 +146,7 @@ final class TodoManager {
 //  * The enum should be nested inside the definition of the `App` class
 final class App {
     var toDoManager = TodoManager()
+    
 
     enum Command : String {
         case add
