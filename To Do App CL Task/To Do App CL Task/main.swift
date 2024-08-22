@@ -29,8 +29,6 @@ protocol Cache {
     func save(todos: [Todo])
     
     func load() -> [Todo]?
-    
-    
 
 }
 
@@ -58,12 +56,11 @@ protocol Cache {
                     print("Loaded successfully")
                     return todos
                 } catch {
-                    print("Failed to load: \(error.localizedDescription)")
+                    print("Failed to load todos from file system: \(error)")
                     return nil
             }
     }
   
-    
     
     func save(todos: [Todo]) {
         let encoder = JSONEncoder()
@@ -72,7 +69,7 @@ protocol Cache {
                     try data.write(to: JSONFileManagerCache.getFileURL(), options: .atomic)
                     print("Saved successfully")
                 } catch {
-                    print("Failed to save: \(error.localizedDescription)")
+                    print("Failed to save todos to file system: \(error)")
                 }
             }
     }
@@ -80,13 +77,14 @@ protocol Cache {
 // `InMemoryCache`: : Keeps todos in an array or similar structure during the session.
 // This won't retain todos across different app launches,
 // but serves as a quick in-session cache.
-final class InMemoryCache: Cache {
+ class InMemoryCache: Cache {
+    private var todos: [Todo] = []
     func save(todos: [Todo]) {
-        <#code#>
+        self.todos = todos
     }
     
     func load() -> [Todo]? {
-        <#code#>
+        return todos.isEmpty ? nil : todos
     }
     
 
@@ -98,12 +96,20 @@ final class InMemoryCache: Cache {
 // * A function named `func toggleCompletion(forTodoAtIndex index: Int)`
 //   to alter the completion status of a specific todo using its index.
 // * A function named `func deleteTodo(atIndex index: Int)` to remove a todo using its index.
- final class TodoManager : JSONFileManagerCache {
-    var currentToDoList: [Todo] = []
-    
+  class TodoManager {
+     //for cache
+     private let cache: Cache
+     private(set) var currentToDoList: [Todo] = []
+
+     init(cache: Cache) {
+             self.cache = cache
+             self.currentToDoList = cache.load() ?? []
+         }
+     
     func addToDo(toDo: String, isCompleted: Bool = false) {
         let temp = Todo(id: UUID(), title: toDo, isCompleted: isCompleted)
         currentToDoList.append(temp)
+        cache.save(todos: currentToDoList)
     }
     
     func listToDos() {
@@ -118,6 +124,7 @@ final class InMemoryCache: Cache {
         //validate that chice exists
         if currentToDoList.indices.contains(choiceToToggle-1) {
             currentToDoList[choiceToToggle-1].isCompleted.toggle()
+            cache.save(todos: currentToDoList)
         }
         else {
             print("Choice \(choiceToToggle) does not exist.  Please select a valid choice")
@@ -128,6 +135,7 @@ final class InMemoryCache: Cache {
     func deleteToDo(choiceToDelete : Int) {
         if currentToDoList.indices.contains(choiceToDelete-1) {
             currentToDoList.remove(at: choiceToDelete - 1)
+            cache.save(todos: currentToDoList)
         }
         else {
             print("Choice \(choiceToDelete) does not exist.  Please select a valid choice")
@@ -144,10 +152,14 @@ final class InMemoryCache: Cache {
 //  * Implement a `Command` enum to specify user commands. Include cases
 //    such as `add`, `list`, `toggle`, `delete`, and `exit`.
 //  * The enum should be nested inside the definition of the `App` class
-final class App {
-    var toDoManager = TodoManager()
+class App {
     
-
+    private let todoManager: TodoManager
+        
+        init(todoManager: TodoManager) {
+            self.todoManager = todoManager
+        }
+    
     enum Command : String {
         case add
         case list
@@ -178,23 +190,23 @@ final class App {
             case .add:
                 print("What would you like to add?")
                 if let task = readLine() {
-                    toDoManager.addToDo(toDo: task)
+                    todoManager.addToDo(toDo: task)
                 }
                 print("Task Added")
                 
             case .list:
-                toDoManager.listToDos()
+                todoManager.listToDos()
                 
             case .toggle:
                 print("Which item status do you want to switch")
                 if let task = readLine() {
-                    toDoManager.toggleToDo(choiceToToggle: Int(task)!)
+                    todoManager.toggleToDo(choiceToToggle: Int(task)!)
                 }
                 
             case .delete:
                 print("Which item do you want to remove")
                 if let task = readLine() {
-                    toDoManager.deleteToDo(choiceToDelete: Int(task)!)
+                    todoManager.deleteToDo(choiceToDelete: Int(task)!)
                 }
                 
             case .exit:
@@ -210,6 +222,10 @@ final class App {
 
 // TODO: Write code to set up and run the app.
 
-var runApp = App()
-runApp.run()
+//Choosing inMemory
+
+let inMemoryCache = InMemoryCache()
+let todoManager = TodoManager(cache: inMemoryCache)
+let app = App(todoManager: todoManager)
+app.run()
 
