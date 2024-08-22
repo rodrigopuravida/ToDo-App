@@ -100,6 +100,20 @@ protocol Cache {
      //for cache
      private let cache: Cache
      private(set) var currentToDoList: [Todo] = []
+      
+      //emoji section
+      let checkEmoji = "✅"
+      let uncheckUpEmoji = "❌"
+      let listingEmoji = "📝"
+      let addingToDoEmoji = "📌"
+      let deleteToDoEmoji = "🗑️"
+      let highlightedEmoji = "🌟"
+      let errorEmoji = "❗"
+      let exitEmoji = "👋"
+      
+      
+      
+      
 
      init(cache: Cache) {
              self.cache = cache
