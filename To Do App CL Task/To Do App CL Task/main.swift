@@ -26,7 +26,7 @@ struct Todo : CustomStringConvertible, Codable {
 //  `func load() -> [Todo]?`: Retrieves and returns the saved todos, or nil if none exist.
 protocol Cache {
     
-    func save(todos: [Todo])
+    func save(todos: [Todo]) -> Bool
     
     func load() -> [Todo]?
 
@@ -62,14 +62,16 @@ protocol Cache {
     }
   
     
-    func save(todos: [Todo]) {
+    func save(todos: [Todo])-> Bool {
         let encoder = JSONEncoder()
                 do {
                     let data = try encoder.encode(todos)
                     try data.write(to: FileSystemCache.getFileURL(), options: .atomic) //atomic for data integrity apparently
                     print("Saved successfully")
+                    return true
                 } catch {
                     print("Failed to save todos to file system: \(error)")
+                    return false
                 }
             }
     }
@@ -79,8 +81,9 @@ protocol Cache {
 // but serves as a quick in-session cache.
  class InMemoryCache: Cache {
     private var todos: [Todo] = []
-    func save(todos: [Todo]) {
+    func save(todos: [Todo]) -> Bool {
         self.todos = todos
+        return true // apparently it always true in memory as per StackOverflow
     }
     
     func load() -> [Todo]? {
@@ -120,9 +123,12 @@ protocol Cache {
     func addToDo(toDo: String, isCompleted: Bool = false) {
         let temp = Todo(id: UUID(), title: toDo, isCompleted: isCompleted)
         currentToDoList.append(temp)
-        //saving to cache
-        cache.save(todos: currentToDoList)
-        print("\(listingEmoji) Task Added")
+        let resultSaved = cache.save(todos: currentToDoList)
+            if resultSaved {
+                print("\(listingEmoji) Task Added")
+            } else {
+                print("\(errorEmoji) Failed to save task")
+            }
     }
     
     func listToDos() {
@@ -137,9 +143,12 @@ protocol Cache {
         //validate that chice exists
         if currentToDoList.indices.contains(choiceToToggle-1) {
             currentToDoList[choiceToToggle-1].isCompleted.toggle()
-            //saving to cache
-            cache.save(todos: currentToDoList)
-            print("Item \(choiceToToggle) has switched status")
+            let resultSaved = cache.save(todos: currentToDoList)
+                if resultSaved {
+                    print("Item \(choiceToToggle) has switched status")
+                } else {
+                    print("\(errorEmoji) Failed to switch task")
+                }
         }
         else {
             print("\(errorEmoji) Choice \(choiceToToggle) does not exist.  Please select a valid choice")
@@ -150,8 +159,12 @@ protocol Cache {
         if currentToDoList.indices.contains(choiceToDelete-1) {
             currentToDoList.remove(at: choiceToDelete - 1)
             //saving to cache
-            cache.save(todos: currentToDoList)
-            print("\(deleteToDoEmoji) Item \(choiceToDelete) has been deleted")
+            let resultSaved = cache.save(todos: currentToDoList)
+                if resultSaved {
+                    print("\(deleteToDoEmoji) Task removed")
+                } else {
+                    print("\(errorEmoji) Failed to remove task")
+                }
         }
         else {
             print("\(errorEmoji) Choice \(choiceToDelete) does not exist.  Please select a valid choice")
